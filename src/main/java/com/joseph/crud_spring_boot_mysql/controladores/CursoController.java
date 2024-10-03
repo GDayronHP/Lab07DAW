@@ -2,6 +2,7 @@ package com.joseph.crud_spring_boot_mysql.controladores;
 
 import com.joseph.crud_spring_boot_mysql.modelos.entidades.Curso;
 import com.joseph.crud_spring_boot_mysql.servicios.CursoService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,60 +13,67 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
-import javax.validation.Valid;
 import java.util.Map;
 
 @Controller
 @SessionAttributes("curso")
 public class CursoController {
+
     @Autowired
-    private CursoService servicio;
+    CursoService cursoService;
 
     @RequestMapping(value = "/listar", method = RequestMethod.GET)
-    public String listar(Model model) {
-        model.addAttribute("titulo", "Listado de Cursos  CJAVA");
-        model.addAttribute("cursos", servicio.listar());
-        return "listarView";
+    public String listarCurso(Model model) {
+        model.addAttribute("cursos", cursoService.listar());
+        return "listar";
     }
 
-    @RequestMapping(value = "/formCurso", method = RequestMethod.GET) // Cambiado a /formCurso
+    @RequestMapping(value = "/form")
     public String crear(Map<String, Object> model) {
         Curso curso = new Curso();
         model.put("curso", curso);
-        model.put("titulo", "Formulario de Curso");
-        return "formView"; // Asegúrate de que esta vista es correcta
+        return "form";
     }
 
-    @RequestMapping(value = "/formCurso/{id}", method = RequestMethod.GET) // Cambiado a /formCurso/{id}
-    public String editar(@PathVariable(value = "id") Integer id, Map<String, Object> model) {
-        Curso curso = null;
-
-        if (id > 0) {
-            curso = servicio.buscar(id);
-        } else {
-            return "redirect:/listar";
-        }
-        model.put("curso", curso);
-        model.put("titulo", "Editar Curso");
-        return "formView";
-    }
-
-    @RequestMapping(value = "/formCurso", method = RequestMethod.POST) // Cambiado a /formCurso
+    @RequestMapping(value = "/form", method = RequestMethod.POST)
     public String guardar(@Valid Curso curso, BindingResult result, Model model, SessionStatus status) {
         if (result.hasErrors()) {
-            model.addAttribute("titulo", "Formulario de Curso");
-            return "formView";
+            return "form";
         }
-        servicio.grabar(curso);
+
+        cursoService.grabar(curso);
         status.setComplete();
         return "redirect:listar";
     }
 
-    @RequestMapping(value = "/eliminar/{id}")
+    // Form para editar
+    @RequestMapping(value = "/form/{id}")
+    public String editar(@PathVariable(value = "id") Integer id, Map<String, Object> model) {
+        Curso curso = null;
+
+        if (id > 0) {
+            curso = cursoService.buscar(id);
+        } else {
+            return "redirect:/listar";
+        }
+        model.put("curso", curso);
+        return "form";
+    }
+
+    // Eliminar
+    @RequestMapping(value = "/eliminar-curso/{id}") // Modified mapping
     public String eliminar(@PathVariable(value = "id") Integer id) {
         if (id > 0) {
-            servicio.eliminar(id);
+            cursoService.eliminar(id);
         }
         return "redirect:/listar";
+    }
+
+    // Ver
+    @RequestMapping(value = "/ver")
+    public String ver(Model model) {
+        model.addAttribute("cursos", cursoService.listar());
+        model.addAttribute("titulo", "Lista de cursos");
+        return "curso/ver";
     }
 }
