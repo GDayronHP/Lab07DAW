@@ -1,15 +1,17 @@
 package com.joseph.crud_spring_boot_mysql.modelos.entidades;
+
+import com.joseph.crud_spring_boot_mysql.aspectos.AuditoriaAspect;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @Table(name = "alumnos")
-public class Alumno {
+public class Alumno implements AuditoriaAspect.Identificable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -26,15 +28,13 @@ public class Alumno {
     @Column(name = "fecha_nacimiento", nullable = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @NotNull(message = "La fecha de nacimiento no puede estar vacía")
-    private LocalDate fechaNacimiento; // Cambiado a LocalDate
+    private LocalDate fechaNacimiento;
 
     @Column(name = "sexo", nullable = false)
     @NotEmpty(message = "El sexo no puede estar vacío")
     private String sexo;
 
-
-    public Alumno() {
-    }
+    public Alumno() {}
 
     public Alumno(int id, String nombres, String apellidos, LocalDate fechaNacimiento, String sexo) {
         this.id = id;
@@ -44,7 +44,8 @@ public class Alumno {
         this.sexo = sexo;
     }
 
-    public int getId() {
+    @Override
+    public Integer getId() {
         return id;
     }
 
@@ -52,19 +53,19 @@ public class Alumno {
         this.id = id;
     }
 
-    public @NotEmpty(message = "El nombre no puede estar vacío") String getNombres() {
+    public String getNombres() {
         return nombres;
     }
 
-    public void setNombres(@NotEmpty(message = "El nombre no puede estar vacío") String nombres) {
+    public void setNombres(String nombres) {
         this.nombres = nombres;
     }
 
-    public @NotEmpty(message = "El apellido no puede estar vacío") String getApellidos() {
+    public String getApellidos() {
         return apellidos;
     }
 
-    public void setApellidos(@NotEmpty(message = "El apellido no puede estar vacío") String apellidos) {
+    public void setApellidos(String apellidos) {
         this.apellidos = apellidos;
     }
 
@@ -72,15 +73,15 @@ public class Alumno {
         return fechaNacimiento;
     }
 
-    public void setFechaNacimiento(@NotNull(message = "La fecha de nacimiento no puede estar vacía") LocalDate fechaNacimiento) {
+    public void setFechaNacimiento(LocalDate fechaNacimiento) {
         this.fechaNacimiento = fechaNacimiento;
     }
 
-    public @NotEmpty(message = "El sexo no puede estar vacío") String getSexo() {
+    public String getSexo() {
         return sexo;
     }
 
-    public void setSexo(@NotEmpty(message = "El sexo no puede estar vacío") String sexo) {
+    public void setSexo(String sexo) {
         this.sexo = sexo;
     }
 

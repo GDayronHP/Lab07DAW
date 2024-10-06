@@ -61,7 +61,7 @@ public class CursoController {
     }
 
     // Eliminar
-    @RequestMapping(value = "/eliminar-curso/{id}") // Modified mapping
+    @RequestMapping(value = "/eliminar/{id}") // Modified mapping
     public String eliminar(@PathVariable(value = "id") Integer id) {
         if (id > 0) {
             cursoService.eliminar(id);
